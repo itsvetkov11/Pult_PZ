@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_1_Navigator"
 Option Explicit
 
 ' =========================================================
-' БЛОК 1: НАВИГАЦИЯ И ЗАКРЫТИЕ (Работает через PZ_SearchMain)
+' Р‘Р›РћРљ 1: РќРђР’РР“РђР¦РРЇ Р Р—РђРљР Р«РўРР• (Р Р°Р±РѕС‚Р°РµС‚ С‡РµСЂРµР· PZ_SearchMain)
 ' =========================================================
 
 Function CurrentOrder() As clsOrder
@@ -15,18 +15,19 @@ Sub PZ_Teleport()
     Dim wsP As Worksheet: Set wsP = ThisWorkbook.Sheets("PZ_Control")
     Dim fVal As String: fVal = Trim(wsP.Range("PZ_SearchMain").Text)
     
-    If fVal = "" Then MsgBox "Введите номер в поле поиска!", 48: Exit Sub
+    If fVal = "" Then MsgBox "Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РІ РїРѕР»Рµ РїРѕРёСЃРєР°!", 48: Exit Sub
     
     UpdateSearchHistory fVal
     
     Dim ord As clsOrder: Set ord = CurrentOrder
     If ord.Rows.count = 0 Then
-        Application.StatusBar = "MES: Заказ " & fVal & " не найден"
-        MsgBox "Заказ '" & fVal & "' не найден!", 48: Exit Sub
+        Application.StatusBar = "MES: Р—Р°РєР°Р· " & fVal & " РЅРµ РЅР°Р№РґРµРЅ"
+        MsgBox "Р—Р°РєР°Р· '" & fVal & "' РЅРµ РЅР°Р№РґРµРЅ!", 48: Exit Sub
     End If
     
     Dim idx As Long: idx = val(wsP.Range("PZ_TeleportIdx").Value) + 1
     If idx > ord.Rows.count Then idx = 1
+    
     wsP.Unprotect
     wsP.Range("PZ_TeleportIdx").Value = idx
     wsP.Protect
@@ -45,17 +46,17 @@ Sub PZ_Teleport()
         .SmallScroll Down:=1: .SmallScroll Up:=1
     End With
     
-    Application.StatusBar = "MES Телепорт " & fVal & ": " & idx & " из " & ord.Rows.count
+    Application.StatusBar = "MES РўРµР»РµРїРѕСЂС‚ " & fVal & ": " & idx & " РёР· " & ord.Rows.count
     
-     ' ДОПОЛНИТЕЛЬНЫЙ ПОИСК ПО ЗВР
+    ' Р”РћРџРћР›РќРРўР•Р›Р¬РќР«Р™ РџРћРРЎРљ РџРћ Р—Р’Р 
     Dim zvrVal As String, zvrSearchTerm As String
     On Error Resume Next
     zvrVal = Trim(wsP.Range("PZ_SearchZVR").Text)
     On Error GoTo 0
     
-    If zvrVal <> "" And zvrVal <> "Не найден" And zvrVal <> "Не найдена" And zvrVal <> fVal Then
-        ' Если ЗВР не начинается с дефиса, добавляем его,
-        ' чтобы IsMatch сделал поиск вхождения без строгих границ
+    If zvrVal <> "" And zvrVal <> "РќРµ РЅР°Р№РґРµРЅ" And zvrVal <> "РќРµ РЅР°Р№РґРµРЅР°" And zvrVal <> fVal Then
+        ' Р•СЃР»Рё Р—Р’Р  РЅРµ РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ РґРµС„РёСЃР°, РґРѕР±Р°РІР»СЏРµРј РµРіРѕ, 
+        ' С‡С‚РѕР±С‹ IsMatch СЃРґРµР»Р°Р» РїРѕРёСЃРє РІС…РѕР¶РґРµРЅРёСЏ Р±РµР· СЃС‚СЂРѕРіРёС… РіСЂР°РЅРёС†
         If Left(zvrVal, 1) <> "-" Then
             zvrSearchTerm = "-" & zvrVal
         Else
@@ -73,30 +74,30 @@ Sub PZ_Teleport()
                 rowList = rowList & zvrOrd.Rows(i)
                 If i < zvrOrd.Rows.count Then rowList = rowList & ", "
             Next i
-            MsgBox "По номеру ЗВР (" & zvrVal & ") найдены дополнительные строки в основной таблице." & vbCrLf & "Номера строк: " & rowList, vbInformation, "Дополнительный поиск по ЗВР"
+            MsgBox "РџРѕ РЅРѕРјРµСЂСѓ Р—Р’Р  (" & zvrVal & ") РЅР°Р№РґРµРЅС‹ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃС‚СЂРѕРєРё РІ РѕСЃРЅРѕРІРЅРѕР№ С‚Р°Р±Р»РёС†Рµ." & vbCrLf & "РќРѕРјРµСЂР° СЃС‚СЂРѕРє: " & rowList, vbInformation, "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ РїРѕРёСЃРє РїРѕ Р—Р’Р "
         End If
     End If
 End Sub
 
 Sub PZ_ProcessRow()
     CurrentOrder.ApplyStyling
-    MsgBox "Готово!", 64
+    MsgBox "Р“РѕС‚РѕРІРѕ!", 64
 End Sub
 
-' МОСТЫ: Добавить участок в СУЩЕСТВУЮЩИЙ заказ (Закрытие)
-Sub Add_KSU(): CurrentOrder.AddSection "КСУ АК", "Работа КСУ": End Sub
-Sub Add_SU():  CurrentOrder.AddSection "СУ АК", "Работа СУ":   End Sub
-Sub Add_CNC(): CurrentOrder.AddSection "Группа ЧПУ", "Работа ЧПУ": End Sub
+' РњРћРЎРўР«: Р”РѕР±Р°РІРёС‚СЊ СѓС‡Р°СЃС‚РѕРє РІ РЎРЈР©Р•РЎРўР’РЈР®Р©РР™ Р·Р°РєР°Р· (Р—Р°РєСЂС‹С‚РёРµ)
+Sub Add_KSU(): CurrentOrder.AddSection "РљРЎРЈ РђРљ", "Р Р°Р±РѕС‚Р° РљРЎРЈ": End Sub
+Sub Add_SU():  CurrentOrder.AddSection "РЎРЈ РђРљ", "Р Р°Р±РѕС‚Р° РЎРЈ":   End Sub
+Sub Add_CNC(): CurrentOrder.AddSection "Р“СЂСѓРїРїР° Р§РџРЈ", "Р Р°Р±РѕС‚Р° Р§РџРЈ": End Sub
 
 ' =========================================================
-' БЛОК 2: ХИРУРГИЧЕСКАЯ ИСТОРИЯ (Без сдвига ячеек)
+' Р‘Р›РћРљ 2: РҐРР РЈР Р“РР§Р•РЎРљРђРЇ РРЎРўРћР РРЇ (Р‘РµР· СЃРґРІРёРіР° СЏС‡РµРµРє)
 ' =========================================================
 Sub UpdateSearchHistory(ByVal newVal As String)
     Dim wsP As Worksheet: Set wsP = ThisWorkbook.Sheets("PZ_Control")
     Dim histRange As Range: Set histRange = wsP.Range("PZ_SearchHistory")
     Dim i As Integer
     
-    If newVal = "" Or newVal = "Не найден" Or newVal = "Не найдена" Then Exit Sub
+    If newVal = "" Or newVal = "РќРµ РЅР°Р№РґРµРЅ" Or newVal = "РќРµ РЅР°Р№РґРµРЅР°" Then Exit Sub
     
     Application.EnableEvents = False
     wsP.Unprotect
@@ -105,7 +106,7 @@ Sub UpdateSearchHistory(ByVal newVal As String)
     mIdx = Application.Match(newVal, histRange, 0)
     
     If Not IsError(mIdx) Then
-        For i = mIdx To 2 Step -1 ' Изменено для работы с Range напрямую, если он отвязан от колонок. Но оставим логику сдвига через Cells, если она жестко привязана.
+        For i = mIdx To 2 Step -1 ' РР·РјРµРЅРµРЅРѕ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Range РЅР°РїСЂСЏРјСѓСЋ, РµСЃР»Рё РѕРЅ РѕС‚РІСЏР·Р°РЅ РѕС‚ РєРѕР»РѕРЅРѕРє. РќРѕ РѕСЃС‚Р°РІРёРј Р»РѕРіРёРєСѓ СЃРґРІРёРіР° С‡РµСЂРµР· Cells, РµСЃР»Рё РѕРЅР° Р¶РµСЃС‚РєРѕ РїСЂРёРІСЏР·Р°РЅР°.
             histRange.Cells(i, 1).Value = histRange.Cells(i - 1, 1).Value
         Next i
     Else
@@ -117,4 +118,5 @@ Sub UpdateSearchHistory(ByVal newVal As String)
     histRange.Cells(1, 1).Value = newVal
     wsP.Protect
     Application.EnableEvents = True
+End Sub
 End Sub
