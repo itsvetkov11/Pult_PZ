@@ -119,4 +119,3 @@ Sub UpdateSearchHistory(ByVal newVal As String)
     wsP.Protect
     Application.EnableEvents = True
 End Sub
-End Sub
