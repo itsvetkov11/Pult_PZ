@@ -122,7 +122,7 @@ Private Sub Clean_Old_Backups()
     Dim file As Object
     
     For Each file In folder.Files
-        If DateDiff("d", file.DateCreated, Now) > 7 Then
+        If DateDiff("d", file.DateCreated, Now) > 7 And LCase(fso.GetExtensionName(file.Path)) = "xlsx" Then
             file.Delete
         End If
     Next file
