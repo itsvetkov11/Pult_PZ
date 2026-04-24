@@ -168,14 +168,12 @@ Sub CompareODM021()
     
     If colRep_PZ = 0 Then
         MsgBox "В отчете не найдена колонка '№ ПЗ' в 8-й строке.", vbCritical
-        wbReport.Close SaveChanges:=False
         Application.ScreenUpdating = True
         Exit Sub
     End If
     
     If colRep_Dept = 0 Then
         MsgBox "В отчете не найдена колонка 'Отдел' в 8-й строке.", vbCritical
-        wbReport.Close SaveChanges:=False
         Application.ScreenUpdating = True
         Exit Sub
     End If
@@ -193,6 +191,7 @@ Sub CompareODM021()
     Dim updatedCount As Long
     updatedCount = 0
     
+    wsNzP.Unprotect Password:="1"
     For i = 9 To lastRowRep
         deptVal = Trim(CStr(wsRepData.Cells(i, colRep_Dept).Value))
         ' Фильтрация по отделу
@@ -218,6 +217,7 @@ Sub CompareODM021()
         End If
     Next i
     
+    wsNzP.Protect Password:="1", AllowFiltering:=True
     wbReport.Close SaveChanges:=False
     
     If updatedCount > 0 Then
