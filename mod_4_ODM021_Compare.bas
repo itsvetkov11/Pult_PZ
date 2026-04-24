@@ -34,6 +34,7 @@ Sub CompareODM021()
         ' Попытка найти по тексту, если именованный диапазон не сработал
         Dim foundCell As Range
         Set foundCell = wsSettings.Columns("H").Find(What:="Путь_ODM021", LookIn:=xlValues, LookAt:=xlWhole)
+        wsSettings.Cells.Find What:="", LookAt:=xlPart ' Сброс поиска (Ctrl+F) на частичное совпадение
         If Not foundCell Is Nothing Then
             folderPath = foundCell.Offset(0, 1).Value
         End If
