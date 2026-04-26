@@ -35,7 +35,6 @@ Sub CompareODM021()
         Dim foundCell As Range
         Set foundCell = wsSettings.Columns("H").Find(What:="ѕуть_ODM021", LookIn:=xlValues, LookAt:=xlWhole)
         wsSettings.Cells.Find What:="", LookAt:=xlPart ' —брос поиска (Ctrl+F) на частичное совпадение
-        wsSettings.Cells.Find What:="", LookAt:=xlPart ' —брос поиска (Ctrl+F) на частичное совпадение
         If Not foundCell Is Nothing Then
             folderPath = foundCell.Offset(0, 1).Value
         End If
@@ -193,6 +192,7 @@ Sub CompareODM021()
     Dim updatedCount As Long
     updatedCount = 0
     
+    wsNzP.Unprotect Password:="1"
     For i = 9 To lastRowRep
         deptVal = Trim(CStr(wsRepData.Cells(i, colRep_Dept).Value))
         ' ‘ильтраци€ по отделу
@@ -218,6 +218,7 @@ Sub CompareODM021()
         End If
     Next i
     
+    wsNzP.Protect Password:="1", AllowFiltering:=True
     wbReport.Close SaveChanges:=False
     
     If updatedCount > 0 Then
