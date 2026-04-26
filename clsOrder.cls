@@ -69,22 +69,37 @@ Sub InitializeSearch(ByVal term As String)
     Next i
 End Sub
 
-Private Function IsMatch(txt As String) As Boolean
+Friend Function IsMatch(txt As String) As Boolean
     Dim isRV As Boolean, actual As String, pos As Long
     isRV = (Left(SearchTerm, 1) = "-")
     actual = IIf(isRV, Mid(SearchTerm, 2), SearchTerm)
+
     pos = InStr(1, txt, actual, vbTextCompare)
+    Do While pos > 0
+        If isRV Then
+            IsMatch = True
+            Exit Function
+        End If
 
-    If pos = 0 Then Exit Function
-    If isRV Then IsMatch = True: Exit Function
+        Dim matchOk As Boolean: matchOk = True
 
-    IsMatch = True
-    If pos > 1 Then
-        If IsNumeric(Mid(txt, pos - 1, 1)) Or Mid(txt, pos - 1, 1) = "-" Then IsMatch = False
-    End If
-    If IsMatch And (pos + Len(actual)) <= Len(txt) Then
-        If IsNumeric(Mid(txt, pos + Len(actual), 1)) Then IsMatch = False
-    End If
+        If pos > 1 Then
+            Dim prevChar As String: prevChar = Mid(txt, pos - 1, 1)
+            If IsNumeric(prevChar) Or prevChar = "-" Then matchOk = False
+        End If
+
+        If matchOk And (pos + Len(actual)) <= Len(txt) Then
+            Dim nextChar As String: nextChar = Mid(txt, pos + Len(actual), 1)
+            If IsNumeric(nextChar) Or nextChar = "-" Then matchOk = False
+        End If
+
+        If matchOk Then
+            IsMatch = True
+            Exit Function
+        End If
+
+        pos = InStr(pos + 1, txt, actual, vbTextCompare)
+    Loop
 End Function
 
 Sub LoadFromRegistry()
@@ -176,7 +191,7 @@ Sub CreateNew(ByVal deptName As String, ByVal workDesc As String)
     End If
 
     ' Проверка на дубликат + ТЕЛЕПОРТ К ОШИБКЕ
-        For i = 2 To lastR
+    For i = 2 To lastR
         If Not IsError(vData(i, 15)) And Not IsError(vData(i, 7)) Then
             If Trim(CStr(vData(i, 15))) = fullName And Trim(CStr(vData(i, 7))) = deptName Then
                 MsgBox "Ошибка! Участок '" & deptName & "' уже добавлен в заказ " & fullName & "!", 48, "Дубликат"
@@ -462,7 +477,6 @@ Sub GatherRows()
 
     Dim r As Long, anchorR As Long, insertR As Long
     anchorR = 0
-
 
     For r = 2 To lastR
         If IsMatch(Trim(wsB.Cells(r, 15).Text)) Then

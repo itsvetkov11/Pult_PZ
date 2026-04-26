@@ -61,9 +61,11 @@ Sub SearchByZVR(ByVal Target As Range, tbl As ListObject)
     Me.Range("PZ_SearchOrder, PZ_SearchClient").ClearContents ' „истим по »ћ≈Ќјћ
     
     Set foundRow = tbl.ListColumns(1).DataBodyRange.Find(What:=sSearch, LookIn:=xlValues, LookAt:=xlWhole)
-    If foundRow Is Nothing And IsNumeric(sSearch) Then
+    tbl.DataBodyRange.Find What:="", LookAt:=xlPart ' —брос поиска (Ctrl+F) на частичное совпадение
+        If foundRow Is Nothing And IsNumeric(sSearch) Then
         Set foundRow = tbl.ListColumns(1).DataBodyRange.Find(What:=CLng(sSearch), LookIn:=xlValues, LookAt:=xlWhole)
-    End If
+        tbl.DataBodyRange.Find What:="", LookAt:=xlPart ' —брос поиска (Ctrl+F) на частичное совпадение
+            End If
     
     If Not foundRow Is Nothing Then
         Me.Range("PZ_SearchOrder").Value = foundRow.Offset(0, 1).Value
@@ -86,9 +88,11 @@ Sub SearchByOrder(ByVal Target As Range, tbl As ListObject)
     UpdateSearchHistory sSearch
     
     Set foundRow = tbl.ListColumns(2).DataBodyRange.Find(What:=sSearch, LookIn:=xlValues, LookAt:=xlWhole)
-    If foundRow Is Nothing And IsNumeric(sSearch) Then
+    tbl.DataBodyRange.Find What:="", LookAt:=xlPart ' —брос поиска (Ctrl+F) на частичное совпадение
+        If foundRow Is Nothing And IsNumeric(sSearch) Then
         Set foundRow = tbl.ListColumns(2).DataBodyRange.Find(What:=CLng(sSearch), LookIn:=xlValues, LookAt:=xlWhole)
-    End If
+        tbl.DataBodyRange.Find What:="", LookAt:=xlPart ' —брос поиска (Ctrl+F) на частичное совпадение
+            End If
     
     If Not foundRow Is Nothing Then
         Me.Range("PZ_SearchZVR").Value = foundRow.Offset(0, -1).Value

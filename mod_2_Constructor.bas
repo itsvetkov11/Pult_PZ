@@ -51,6 +51,7 @@ Sub Show_Ch_Hint(ByVal deptName As String)
     wsP.Range("PZ_DeptCode").ClearContents ' Очищаем старый код по ИМЕНИ
 
     Set f = wsRef.Columns("G").Find(What:=deptName, LookIn:=xlValues, LookAt:=xlWhole)
+    wsRef.Cells.Find What:="", LookAt:=xlPart ' Сброс поиска (Ctrl+F) на частичное совпадение
     If Not f Is Nothing Then
         Dim code As String: code = f.Offset(0, -1).Value
         wsP.Range("PZ_DeptCode").Value = code ' Пишем код по ИМЕНИ

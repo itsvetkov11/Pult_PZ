@@ -34,6 +34,7 @@ Sub CompareODM021()
         ' Попытка найти по тексту, если именованный диапазон не сработал
         Dim foundCell As Range
         Set foundCell = wsSettings.Columns("H").Find(What:="Путь_ODM021", LookIn:=xlValues, LookAt:=xlWhole)
+        wsSettings.Cells.Find What:="", LookAt:=xlPart ' Сброс поиска (Ctrl+F) на частичное совпадение
         If Not foundCell Is Nothing Then
             folderPath = foundCell.Offset(0, 1).Value
         End If
@@ -168,14 +169,12 @@ Sub CompareODM021()
     
     If colRep_PZ = 0 Then
         MsgBox "В отчете не найдена колонка '№ ПЗ' в 8-й строке.", vbCritical
-        wbReport.Close SaveChanges:=False
         Application.ScreenUpdating = True
         Exit Sub
     End If
     
     If colRep_Dept = 0 Then
         MsgBox "В отчете не найдена колонка 'Отдел' в 8-й строке.", vbCritical
-        wbReport.Close SaveChanges:=False
         Application.ScreenUpdating = True
         Exit Sub
     End If
@@ -193,6 +192,7 @@ Sub CompareODM021()
     Dim updatedCount As Long
     updatedCount = 0
     
+    wsNzP.Unprotect Password:="1"
     For i = 9 To lastRowRep
         deptVal = Trim(CStr(wsRepData.Cells(i, colRep_Dept).Value))
         ' Фильтрация по отделу
@@ -218,6 +218,7 @@ Sub CompareODM021()
         End If
     Next i
     
+    wsNzP.Protect Password:="1", AllowFiltering:=True
     wbReport.Close SaveChanges:=False
     
     If updatedCount > 0 Then
