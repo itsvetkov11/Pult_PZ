@@ -1,25 +1,26 @@
 import glob
 
-# we need to append a dummy search with xlPart right after any xlWhole search to reset Excel's find state
-def add_dummy_search(filename, encoding):
-    with open(filename, 'r', encoding=encoding) as f:
-        lines = f.readlines()
-        
-    new_lines = []
-    for line in lines:
-        new_lines.append(line)
-        if "LookAt:=xlWhole" in line:
-            # Add a dummy search to reset the dialog flag
-            indent = line[:len(line) - len(line.lstrip())]
-            new_lines.append(indent + "' Сброс поиска (Ctrl+F) на частичное совпадение\n")
-            new_lines.append(indent + "Dim dummyRng As Range\n")
-            # find what exactly was searched to know the range, or just use Cells.Find
-            # Actually, the simplest reset is Cells.Find(What:="", LookAt:=xlPart)
-            new_lines.append(indent + "Set dummyRng = Cells.Find(What:=\"\", LookAt:=xlPart)\n")
-            
-    with open(filename, 'w', encoding=encoding) as f:
-        f.writelines(new_lines)
+# reset find
+for filepath in glob.glob('*.bas') + glob.glob('*.cls'):
+    with open(filepath, 'r', encoding='utf-8' if 'mod_4' not in filepath and 'Лист' not in filepath else 'windows-1251') as f:
+        content = f.read()
 
-add_dummy_search('mod_2_Constructor.bas', 'utf-8')
-add_dummy_search('mod_4_ODM021_Compare.bas', 'windows-1251')
-add_dummy_search('Лист1.cls', 'windows-1251')
+    # mod_2
+    content = content.replace('    Set f = wsRef.Columns("G").Find(What:=deptName, LookIn:=xlValues, LookAt:=xlWhole)\n', '    Set f = wsRef.Columns("G").Find(What:=deptName, LookIn:=xlValues, LookAt:=xlWhole)\n    wsRef.Cells.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n')
+    
+    # mod_4
+    if 'mod_4' in filepath:
+        content = content.replace('        Set foundCell = wsSettings.Columns("H").Find(What:="Путь_ODM021", LookIn:=xlValues, LookAt:=xlWhole)\n', '        Set foundCell = wsSettings.Columns("H").Find(What:="Путь_ODM021", LookIn:=xlValues, LookAt:=xlWhole)\n        wsSettings.Cells.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n')
+        
+    # List1
+    if 'Лист1' in filepath:
+        content = content.replace('    Set foundRow = tbl.ListColumns(1).DataBodyRange.Find(What:=sSearch, LookIn:=xlValues, LookAt:=xlWhole)\n', '    Set foundRow = tbl.ListColumns(1).DataBodyRange.Find(What:=sSearch, LookIn:=xlValues, LookAt:=xlWhole)\n    tbl.DataBodyRange.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n')
+        content = content.replace('        Set foundRow = tbl.ListColumns(1).DataBodyRange.Find(What:=CLng(sSearch), LookIn:=xlValues, LookAt:=xlWhole)\n', '        Set foundRow = tbl.ListColumns(1).DataBodyRange.Find(What:=CLng(sSearch), LookIn:=xlValues, LookAt:=xlWhole)\n        tbl.DataBodyRange.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n')
+        content = content.replace('    Set foundRow = tbl.ListColumns(2).DataBodyRange.Find(What:=sSearch, LookIn:=xlValues, LookAt:=xlWhole)\n', '    Set foundRow = tbl.ListColumns(2).DataBodyRange.Find(What:=sSearch, LookIn:=xlValues, LookAt:=xlWhole)\n    tbl.DataBodyRange.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n')
+        content = content.replace('        Set foundRow = tbl.ListColumns(2).DataBodyRange.Find(What:=CLng(sSearch), LookIn:=xlValues, LookAt:=xlWhole)\n', '        Set foundRow = tbl.ListColumns(2).DataBodyRange.Find(What:=CLng(sSearch), LookIn:=xlValues, LookAt:=xlWhole)\n        tbl.DataBodyRange.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n')
+
+    # Ensure no duplicates
+    content = content.replace('    wsRef.Cells.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n    wsRef.Cells.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n', '    wsRef.Cells.Find What:="", LookAt:=xlPart \' Сброс поиска (Ctrl+F) на частичное совпадение\n')
+
+    with open(filepath, 'w', encoding='utf-8' if 'mod_4' not in filepath and 'Лист' not in filepath else 'windows-1251') as f:
+        f.write(content)

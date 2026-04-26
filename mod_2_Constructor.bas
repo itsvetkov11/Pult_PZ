@@ -59,7 +59,7 @@ Sub Show_Ch_Hint(ByVal deptName As String)
     Else
         Application.StatusBar = "MES: Код для цеха '" & deptName & "' не найден"
     End If
-    wsP.Protect
+    wsP.Protect UserInterfaceOnly:=True
 End Sub
 
 ' =========================================================
@@ -158,7 +158,7 @@ Sub PZ_SendToBase_Safe()
 
         wsP.Unprotect
         wsP.Range("PZ_ItemCode, PZ_DeptCode, PZ_Num").ClearContents
-        wsP.Protect
+        wsP.Protect UserInterfaceOnly:=True
 
         ThisWorkbook.Save ' Сохраняем пульт, чтобы он запомнил очистку полей
 
@@ -206,7 +206,7 @@ Sub Undo_Last_Action()
         ' Стираем память
         wsP.Unprotect
         wsP.Range("UNDO_Row, UNDO_WB, UNDO_ID, UNDO_Dept").ClearContents
-        wsP.Protect
+        wsP.Protect UserInterfaceOnly:=True
 
         wsB.Parent.Save
     Else

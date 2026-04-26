@@ -261,7 +261,7 @@ Sub CreateNew(ByVal deptName As String, ByVal workDesc As String)
     wsP.Range("UNDO_WB").Value = wsB.Parent.Name
     wsP.Range("UNDO_ID").Value = fullName
     wsP.Range("UNDO_Dept").Value = deptName
-    wsP.Protect
+    wsP.Protect UserInterfaceOnly:=True
 
     ' СИНХРОНИЗАЦИЯ С ОБЩЕЙ БАЗОЙ
     wsB.Parent.Save
@@ -461,7 +461,7 @@ Sub AddSection(deptName As String, workDesc As String)
     wsP.Range("UNDO_WB").Value = wsB.Parent.Name
     wsP.Range("UNDO_ID").Value = targetFullName
     wsP.Range("UNDO_Dept").Value = deptName
-    wsP.Protect
+    wsP.Protect UserInterfaceOnly:=True
 End Sub
 
 ' =========================================================

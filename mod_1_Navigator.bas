@@ -30,7 +30,7 @@ Sub PZ_Teleport()
     
     wsP.Unprotect
     wsP.Range("PZ_TeleportIdx").Value = idx
-    wsP.Protect
+    wsP.Protect UserInterfaceOnly:=True
     
     Dim targetRow As Long: targetRow = ord.Rows(idx)
     Dim wsB As Worksheet: Set wsB = ord.BaseSheet
@@ -116,6 +116,6 @@ Sub UpdateSearchHistory(ByVal newVal As String)
     End If
     
     histRange.Cells(1, 1).Value = newVal
-    wsP.Protect
+    wsP.Protect UserInterfaceOnly:=True
     Application.EnableEvents = True
 End Sub
